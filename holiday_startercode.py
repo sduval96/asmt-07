@@ -22,6 +22,12 @@ class Holiday:
     def get_date(self):
         return self.date
     
+    def get_week(self):
+        return self.date.isocalendar()[1]
+    
+    def get_year(self):
+        return self.date.year
+    
     def __str__ (self):
         return f'{self.name} ({self.date})'
         # Holiday output when printed.
@@ -102,10 +108,9 @@ class HolidayList(Holiday):
         return len(self.innerHolidays)
         # Return the total number of holidays in innerHolidays
     
-    def filter_holidays_by_week(year, week_number):
+    def filter_holidays_by_week(self, year, week_number):
         year, week_number = int(year), int(week_number)
-        holidays = (lambda holiday: (holiday.get_week() == week_number and holiday.get_year() == year), self.innerHolidays)
-        holidays = list(filter(holidays))
+        holidays = list(filter(lambda holiday: (holiday.get_week() == week_number and holiday.get_year() == year), self.innerHolidays))
         # Week number is part of the the Datetime object
         # Cast filter results as list
         # return your holidays
@@ -116,11 +121,15 @@ class HolidayList(Holiday):
         # Cast filter results as list
         # return your holidays
 
-    def displayHolidaysInWeek(holidayList):
-        pass
+    def displayHolidaysInWeek(self, year, week):
+        printer = self.filter_holidays_by_week(year, week)
+        print(f'These are the holidays for this year and week ({year}, {week}): ')
+        for i in printer:
+            print(i)
         # Use your filter_holidays_by_week to get list of holidays within a week as a parameter
         # Output formated holidays in the week. 
         # * Remember to use the holiday __str__ method.
+        return True
 
     def getWeather(weekNum):
         pass
@@ -186,6 +195,16 @@ class HolidayList(Holiday):
             print("Save canceled \n")
         else:
             print("That is an incorrect response: Try again")
+            
+    def view_holiday_helper(holidayList):
+        print("View Holidays")
+        print("=============")
+        year = input("Select the year (2020 - 2024): ")
+        week = input("Which week? (1-52)... Leave Blank for current week: ")
+        if week == "":
+            holidayList.viewCurrentWeek(year)
+        else:
+            holidayList.displayHolidaysInWeek(year, week)
         
 def main():
     holidayList = HolidayList()
@@ -213,7 +232,7 @@ def main():
         elif menu_choice == 3:
             save_holiday_helper(holidayList)
         elif menu_choice == 4:
-            displayHolidaysInWeek()
+            view_holiday_helper(holidayList)
         elif menu_choice == 5:
             print("")
             print("Exit")
